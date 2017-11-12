@@ -23,7 +23,7 @@ public class PancakeFlipper {
     }
 
     private PancakeBaseCaseSolver readCase(int caseNo) {
-        return new PancakeStupidCaseSolver(caseNo, scanner.next(), scanner.nextInt(), this.out);
+        return new PancakeStupidCaseSolverNotRecursive(caseNo, scanner.next(), scanner.nextInt(), this.out);
     }
 
     public void flipAll() {
