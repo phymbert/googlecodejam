@@ -2,34 +2,27 @@ package org.hypik.googlecodejam.e2017.qualif.pancake;
 
 
 import java.io.PrintStream;
-import java.util.List;
 
 public class PancakeCaseSolver extends PancakeBaseCaseSolver {
 
-    private final Flipper flipper;
-
     public PancakeCaseSolver(int caseNo, String pancakes, int flipperSize, PrintStream out) {
         super(caseNo, pancakes, flipperSize, out);
-        this.flipper = new Flipper(asBoolean(this.pancakes), flipperSize);
-    }
-
-    private boolean[] asBoolean(List<Pancake> pancakes) {
-        boolean[] pancakesBool = new boolean[pancakes.size()];
-        for (int i = 0; i < pancakesBool.length; i++) {
-            pancakesBool[i] = pancakes.get(i).asBoolean();
-        }
-        return pancakesBool;
     }
 
     public int solve() {
-        boolean next = true;
-        if (!flipper.checkSolved()) {
-            while (!flipper.isDone() && next) {
-                flipper.checkSolved();
-                next = flipper.next();
+        int result = 0;
+        for (int i = 0; i <= pancakes.size() - flipperSize; i++) {
+            if (pancakes.get(i) == Pancake.BLANK) {
+                result++;
+                for (int j = 0; j < flipperSize; j++) {
+                    pancakes.set(i + j, pancakes.get(i + j).opposite());
+                }
             }
         }
-        return flipper.getBestSolution();
+        if (pancakes.stream().anyMatch(p -> p == Pancake.BLANK)) {
+            return IMPOSSIBLE;
+        }
+        return result;
     }
 
 }

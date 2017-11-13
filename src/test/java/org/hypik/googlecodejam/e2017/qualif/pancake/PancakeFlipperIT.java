@@ -29,7 +29,6 @@ public class PancakeFlipperIT {
     }
 
     @Test
-    @Disabled // No working solution yet
     public void testLarge() {
         // Given
         //ByteArrayOutputStream out = new ByteArrayOutputStream();
