@@ -2,7 +2,7 @@ package org.hypik.googlecodejam.e2017.qualif.pancake;
 
 import java.util.List;
 
-import static org.junit.platform.commons.util.CollectionUtils.toUnmodifiableList;
+import static java.util.stream.Collectors.toList;
 
 public enum Pancake {
     HAPPY(),
@@ -30,7 +30,15 @@ public enum Pancake {
     }
 
     public static List<Pancake> pancakes(String pancakes) {
-        return pancakes.chars().mapToObj(Pancake::parsePancake).collect(toUnmodifiableList());
+        return pancakes.chars().mapToObj(Pancake::parsePancake).collect(toList());
+    }
+
+    public boolean asBoolean() {
+        switch (this) {
+            case HAPPY:
+                return true;
+        }
+        return false;
     }
 
     private static Pancake parsePancake(int i) {
