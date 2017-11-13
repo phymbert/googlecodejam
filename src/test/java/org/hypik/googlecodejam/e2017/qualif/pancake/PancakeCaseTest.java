@@ -28,13 +28,14 @@ public class PancakeCaseTest {
         CASE_SMALL_48("++++", 2, 0),
 
         // impossible
-        CASE_SMALL_3("-+-+-", 4, IMPOSSIBLE),
-        CASE_SMALL_5("-+++-", 3, IMPOSSIBLE),
-        CASE_SMALL_96("+-+-+-+-", 3, IMPOSSIBLE),
-        CASE_SMALL_97("-+", 2, IMPOSSIBLE),
-        CASE_SMALL_98("-++", 2, IMPOSSIBLE),
-        CASE_SMALL_99("----", 3, IMPOSSIBLE),
-        CASE_SMALL_100("+-+-+-+-+", 3, IMPOSSIBLE);
+        CASE_SMALL_3_IMPO("-+-+-", 4, IMPOSSIBLE),
+        CASE_SMALL_5_IMPO("-+++-", 3, IMPOSSIBLE),
+        CASE_SMALL_96_IMPO("+-+-+-+-", 3, IMPOSSIBLE),
+        CASE_SMALL_97_IMPO("-+", 2, IMPOSSIBLE),
+        CASE_SMALL_98_IMPO("-++", 2, IMPOSSIBLE),
+        CASE_SMALL_99_IMPO("----", 3, IMPOSSIBLE),
+        CASE_SMALL_100_IMPO("+-+-+-+-+", 3, IMPOSSIBLE)
+;
 
         public final String pancakes;
         public final int flipperSize;
@@ -47,9 +48,39 @@ public class PancakeCaseTest {
         }
     }
 
+
+    static enum PancakesCaseLarge {
+        CASE_4_LARGE("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-", 2, -1),
+
+        ;
+
+        public final String pancakes;
+        public final int flipperSize;
+        public final int expectedSolved;
+
+        PancakesCaseLarge(String pancakes, int flipperSize, int expectedSolved) {
+            this.pancakes = pancakes;
+            this.flipperSize = flipperSize;
+            this.expectedSolved = expectedSolved;
+        }
+    }
+
     @ParameterizedTest
     @EnumSource(PancakesCaseSmall.class)
-    void withValueSource(PancakesCaseSmall pancakesCase) {
+    void small(PancakesCaseSmall pancakesCase) {
+        final PancakeCaseSolver case1 = new PancakeCaseSolver(pancakesCase.ordinal(),
+                pancakesCase.pancakes, pancakesCase.flipperSize, null);
+
+        // When
+        int flip = case1.solve();
+
+        // Then
+        assertThat(flip).isEqualTo(pancakesCase.expectedSolved);
+    }
+
+    @ParameterizedTest
+    @EnumSource(PancakesCaseLarge.class)
+    void large(PancakesCaseLarge pancakesCase) {
         final PancakeCaseSolver case1 = new PancakeCaseSolver(pancakesCase.ordinal(),
                 pancakesCase.pancakes, pancakesCase.flipperSize, null);
 

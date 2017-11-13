@@ -23,9 +23,11 @@ public class PancakeCaseSolver extends PancakeBaseCaseSolver {
 
     public int solve() {
         boolean next = true;
-        while (!flipper.isDone() && next) {
-            flipper.checkSolved();
-            next = flipper.next();
+        if (!flipper.checkSolved()) {
+            while (!flipper.isDone() && next) {
+                flipper.checkSolved();
+                next = flipper.next();
+            }
         }
         return flipper.getBestSolution();
     }

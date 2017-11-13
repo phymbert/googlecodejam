@@ -12,7 +12,7 @@ public class PancakeStupidCaseNotRecursiveTest {
 
     @ParameterizedTest
     @EnumSource(PancakeCaseTest.PancakesCaseSmall.class)
-    void withValueSource(PancakeCaseTest.PancakesCaseSmall pancakesCase) {
+    void small(PancakeCaseTest.PancakesCaseSmall pancakesCase) {
         final PancakeStupidCaseSolverNotRecursive case1 = new PancakeStupidCaseSolverNotRecursive(pancakesCase.ordinal(),
                 pancakesCase.pancakes, pancakesCase.flipperSize, null);
 

@@ -12,7 +12,7 @@ public class PancakeStupidCaseTest {
 
     @ParameterizedTest
     @EnumSource(PancakeCaseTest.PancakesCaseSmall.class)
-    void withValueSource(PancakeCaseTest.PancakesCaseSmall pancakesCase) {
+    void small(PancakeCaseTest.PancakesCaseSmall pancakesCase) {
         final PancakeStupidCaseSolver case1 = new PancakeStupidCaseSolver(pancakesCase.ordinal(),
                 pancakesCase.pancakes, pancakesCase.flipperSize, null);
 

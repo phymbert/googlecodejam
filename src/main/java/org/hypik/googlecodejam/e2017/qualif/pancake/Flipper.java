@@ -9,6 +9,7 @@ public class Flipper {
     private final int flipperSize;
     private final int maxFlipperStart;
     private final List<Integer> flipIndexes = new ArrayList<>();
+    private final List<Integer> flipIndexesCount = new ArrayList<>();
     private final Map<Integer, Integer> explored = new HashMap<>();
     private int flipCount = 0;
 
@@ -26,8 +27,8 @@ public class Flipper {
         boolean validFlip = false;
 
         while (!isDone() && !validFlip) {
-            if (!canFlip()) {
-                explored.put(hash(), flipCount);
+            if (!canFlip() || checkSolved()) {
+                Integer previous = explored.put(hash(), flipCount);
                 doUnFlip();
             } else {
                 validFlip = flipIndexes.isEmpty() || !isPancakesAlreadyKnownBetter();
@@ -43,17 +44,24 @@ public class Flipper {
     }
 
     private boolean canFlip() {
-        return flipIndexes.size() - 1 < flipCount || flipIndexes.get(flipCount) < maxFlipperStart
+        return flipIndexes.size() - 1 < flipCount || flipIndexesCount.get(flipCount) < maxFlipperStart
 //                && flipCount < 4 // FIXME
                 ;
     }
 
     private boolean isPancakesAlreadyKnownBetter() {
+        if (bestSolution != IMPOSSIBLE && bestSolution < flipCount) {
+            return true;
+        }
         boolean pancakesAlreadyKnownBetter = false;
         int hash = hash();
         final Integer previous = explored.putIfAbsent(hash, flipCount);
-        if (previous != null && previous < flipCount) {
-            pancakesAlreadyKnownBetter = true;
+        if (previous != null) {
+            if (previous < flipCount) {
+                pancakesAlreadyKnownBetter = true;
+            } else if (previous != flipCount) {
+                explored.put(hash, flipCount);
+            }
         }
         //print("KnownBetter " + (pancakesAlreadyKnownBetter ? "TRUE " + previous : "FALSE"));
         return pancakesAlreadyKnownBetter;
@@ -66,19 +74,39 @@ public class Flipper {
 
     private void doFlip() {
         flipCount++;
-        if (flipIndexes.size() < flipCount) {
-            flipIndexes.add(0);
+        int nextIndex = findBestNext();
+        if (flipCount - 1 < flipIndexes.size()) {
+            flipIndexes.set(flipCount - 1, nextIndex);
+            flipIndexesCount.set(flipCount - 1, flipIndexesCount.get(flipCount - 1) + 1);
         } else {
-            flipIndexes.set(flipCount - 1, flipIndexes.get(flipCount - 1) + 1);
+            flipIndexes.add(nextIndex);
+            flipIndexesCount.add(0);
         }
         flip();
 //        print("FLIP");
+    }
+
+    private int findBestNext() {
+        int nextIndex = 0;
+        if (flipCount - 1 < flipIndexes.size()) {
+            nextIndex = (flipIndexes.get(flipCount - 1) + 1) % (maxFlipperStart + 1);
+        } else {
+            nextIndex = 0;
+            for (int i = 0; i < maxFlipperStart; i++) {
+                if (!pancakes[i]) {
+                    nextIndex = i;
+                    break;
+                }
+            }
+        }
+        return nextIndex;
     }
 
     private void doUnFlip() {
         flip();
         if (flipIndexes.size() >= flipCount + 1) {
             flipIndexes.remove(flipCount);
+            flipIndexesCount.remove(flipCount);
         }
         flipCount--;
 //        print("UNFLIP");
@@ -119,31 +147,33 @@ public class Flipper {
     }
 
     private void print(String next) {
-//        StringBuilder builder = new StringBuilder(next);
-//        builder.append(flipCount)
+        StringBuilder builder = new StringBuilder(next);
+        builder
+                .append(" ")
+                .append(flipCount)
 //                .append(" ")
 //                .append(bestSolution)
 //                .append(" ")
 //                .append(explored.size())
-//                .append(" ")
-////                .append(flipIndexes)
-////                .append(" ")
-// ;
-//
-//        boolean[] pancakesTmp = new boolean[pancakes.length];
-//        System.arraycopy(pancakes, 0, pancakesTmp, 0, pancakes.length);
-//        StringBuilder builder2 = new StringBuilder();
-//        builder2.append(printPancakes(pancakesTmp, flipCount > 0 && flipCount <= flipIndexes.size() ? flipIndexes.get(flipCount - 1) : -1));
-//
-//        for (int i = flipCount - 1; i >= 0; i--) {
-//            int flipIndex = flipIndexes.get(i);
-//            flip(pancakesTmp, flipIndex);
-//            String builder3 = printPancakes(pancakesTmp, flipIndex);
-//            builder2.insert(0, builder3);
-//        }
-//        builder.append(builder2.toString());
+                .append(" ")
+                .append(flipIndexes)
+                .append(" ")
+ ;
 
-//        System.out.println(builder.toString());
+        boolean[] pancakesTmp = new boolean[pancakes.length];
+        System.arraycopy(pancakes, 0, pancakesTmp, 0, pancakes.length);
+        StringBuilder builder2 = new StringBuilder();
+        builder2.append(printPancakes(pancakesTmp, flipCount > 0 && flipCount <= flipIndexes.size() ? flipIndexes.get(flipCount - 1) : -1));
+
+        for (int i = flipCount - 1; i >= 0; i--) {
+            int flipIndex = flipIndexes.get(i);
+            flip(pancakesTmp, flipIndex);
+            String builder3 = printPancakes(pancakesTmp, flipIndex);
+            builder2.insert(0, builder3);
+        }
+        builder.append(builder2.toString());
+
+        System.out.println(builder.toString());
     }
 
     private String printPancakes() {
